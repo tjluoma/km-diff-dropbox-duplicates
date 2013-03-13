@@ -17,6 +17,8 @@ and change it to
 
 or any other program which will accept two file paths.
 
+(Just remember that conflicted files can be all sorts of files, and make sure that your `diff` program can handle it if they aren't just plain text files. That's why I use [Kaleidoscope] by default.)
+
 ### It doesn't just let you compare them, it will rename the file if you want.
 
 Say you have two files such as "foo.doc" and "foo (TJ Luoma's conflicted copy 2013-03-12).doc".
