@@ -41,6 +41,12 @@ alias diff='/usr/local/bin/ksdiff'
 # alias diff='/usr/local/bin/bbdiff'
 
 
+	# if the `diff` command has an option to 'wait' (ksdiff and bbdiff both use --wait)
+	# and you want to use it, include it here
+DIFF_WAIT='--wait'
+
+
+
 
 	# how many errors have we encountered
 COUNT=0
@@ -80,7 +86,7 @@ do
 				then
 							# If we found a file with the expected filename we created with that regex
 							# then run our 'diff' program against it and the original file
-						diff "$ORIGINAL_FILE" "$i"
+						diff ${DIFF_WAIT} "$ORIGINAL_FILE" "$i"
 				else
 							# if we did not find an "original" file… well,
 							# then this isn't really a duplicate or a

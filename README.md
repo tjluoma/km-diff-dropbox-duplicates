@@ -31,6 +31,33 @@ Simply delete the original file (in this example, "foo.doc") and then call the K
 
 (Obviously if you decide that you want to keep the "foo.doc" file, just delete the other one.)
 
+### Use on the command line
+
+By using [dropbox-launchd-conflicted-copy.sh] on the command line you can automatically process all of your Dropbox duplicates at once.
+
+***Note:*** using this feature assumes that your chose `diff` program supports the `--wait` flag or equivalent (if different, change `DIFF_WAIT=` in [km-diff-in-finder.sh]).
+
+To use these together, simply run a loop like this in Terminal:
+
+	dropbox-launchd-conflicted-copy.sh |\
+		egrep -v '^dropbox-launchd-conflicted-copy.sh' |\
+			while read line
+	do
+
+		echo "Working on: $line"
+
+		km-diff-in-finder.sh "$line"
+
+	done
+
+the `egrep` command tells the loop to ignore the summary line which `dropbox-launchd-conflicted-copy.sh` prints at the top of its output.  Then each matching file will be sent to the `km-diff-in-finder.sh` command.
+
+Compare the files, then close them, and the loop will open the next pair.
+
+
+[km-diff-in-finder.sh]: https://github.com/tjluoma/km-diff-dropbox-duplicates/blob/master/km-diff-in-finder.sh
+
+[dropbox-launchd-conflicted-copy.sh]: https://github.com/tjluoma/launchd-check-for-dropbox-conflicts/blob/master/dropbox-launchd-conflicted-copy.sh
 
 [BBEdit]: http://www.barebones.com/bbedit
 
