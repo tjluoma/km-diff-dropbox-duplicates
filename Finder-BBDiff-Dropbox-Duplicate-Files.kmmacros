@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>Activate</key>
+		<string>Normal</string>
+		<key>IsActive</key>
+		<true/>
+		<key>Macros</key>
+		<array>
+			<dict>
+				<key>Actions</key>
+				<array>
+					<dict>
+						<key>Actions</key>
+						<array>
+							<dict>
+								<key>DisplayKind</key>
+								<string>None</string>
+								<key>IsActive</key>
+								<true/>
+								<key>IsDisclosed</key>
+								<true/>
+								<key>MacroActionType</key>
+								<string>ExecuteShellScript</string>
+								<key>NewFile</key>
+								<string>/usr/local/bin/km-bbdiff-in-finder.sh</string>
+								<key>Path</key>
+								<string>/usr/local/bin/km-bbdiff-in-finder.sh</string>
+								<key>Text</key>
+								<string>#!/bin/zsh
+
+NAME="$0:t"
+
+if [ "$#" = "0" -a "$KMVAR_filePath" != "" ]
+then
+			# if we're being called from Keyboard Maestro then re-call the script with an arg
+		exec "$0" "$KMVAR_filePath"
+		exit 0
+fi
+
+
+
+	# which 'diff' command do you want to use? Could also be function
+alias diff='/usr/local/bin/bbdiff'
+
+	# set a variable we'll change if we need to later
+COUNT=0
+
+for i in $@
+do
+
+		if [[ -f "$i" ]]
+		then
+				# file exists
+
+					# Note that this assumes your hostnames are just letters/numbers with no punctuation or spaces
+					# if that's not the case, adjust the sed regex after the ( and before the 's
+
+				ORIGINAL_FILE=$(echo "$i" | sed "s# ([a-zA-Z0-9]*'s conflicted copy [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])##g")
+
+				if [[ -e "$ORIGINAL_FILE" ]]
+				then
+						diff "$ORIGINAL_FILE" "$i"
+				else
+						msg sticky "No $ORIGINAL_FILE found for $i"
+						((COUNT++))
+				fi
+
+		else
+
+				((COUNT++))
+
+		fi
+done
+
+
+if [[ "$COUNT" != "0" ]]
+then
+
+		ERROR_OR_ERRORS=errors
+
+		[[ "$COUNT" -gt "1" ]] &amp;&amp; 		ERROR_OR_ERRORS=errors
+
+
+		msg sticky "Finished but with $COUNT "
+
+fi
+
+exit 0
+# EOF
+</string>
+								<key>TimeOutAbortsMacro</key>
+								<true/>
+								<key>TrimResults</key>
+								<true/>
+								<key>UseText</key>
+								<false/>
+								<key>Variable</key>
+								<string>Variable</string>
+							</dict>
+						</array>
+						<key>Collections</key>
+						<dict>
+							<key>CollectionList</key>
+							<array>
+								<dict>
+									<key>CollectionType</key>
+									<string>FinderSelection</string>
+								</dict>
+							</array>
+						</dict>
+						<key>IsActive</key>
+						<true/>
+						<key>IsDisclosed</key>
+						<true/>
+						<key>MacroActionType</key>
+						<string>For</string>
+						<key>TimeOutAbortsMacro</key>
+						<true/>
+						<key>Variable</key>
+						<string>filePath</string>
+					</dict>
+				</array>
+				<key>IsActive</key>
+				<true/>
+				<key>Name</key>
+				<string>Finder - BBDiff Dropbox Duplicate Files</string>
+				<key>Triggers</key>
+				<array>
+					<dict>
+						<key>FireType</key>
+						<string>Pressed</string>
+						<key>KeyCode</key>
+						<integer>2</integer>
+						<key>MacroTriggerType</key>
+						<string>HotKey</string>
+						<key>Modifiers</key>
+						<integer>2048</integer>
+						<key>TriggerRepeat</key>
+						<false/>
+					</dict>
+				</array>
+				<key>UID</key>
+				<string>FEBBB614-8144-4CC5-839B-480277F4BE22</string>
+			</dict>
+		</array>
+		<key>Name</key>
+		<string>Only in -&gt; Finder</string>
+		<key>Targeting</key>
+		<dict>
+			<key>Targeting</key>
+			<string>Included</string>
+			<key>TargetingApps</key>
+			<array>
+				<dict>
+					<key>BundleIdentifier</key>
+					<string>com.apple.finder</string>
+					<key>Creator</key>
+					<integer>1296122707</integer>
+					<key>FileType</key>
+					<integer>1179534418</integer>
+					<key>Name</key>
+					<string>Finder.app</string>
+					<key>NewFile</key>
+					<string>/System/Library/CoreServices/Finder.app</string>
+				</dict>
+			</array>
+		</dict>
+		<key>UID</key>
+		<string>103D9EE1-B606-4195-9ADF-14040981CD9A</string>
+	</dict>
+</array>
+</plist>
