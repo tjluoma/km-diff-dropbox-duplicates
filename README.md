@@ -1,23 +1,42 @@
 km-diff-dropbox-duplicates
 ==========================
 
-A Keyboard Maestro macro (and shell script) to compare a Dropbox "Conflicted Copy" file with its original
+***Summary:*** I wrote a shell script which looks at a "conflicted copy" file created by [Dropbox] and then tries to figure out what to do with it:
 
-[Previously], I showed how I find Dropbox duplicates (or "conflicted copies") using launchd and a saved Spotlight search.
+1. You say this is a 'conflicted copy' but is there a file with the same name (minus the 'conflicted copy' part, obviously)? If not, just rename the 'conflicted copy' file to the original filename.
 
-But that's only getting us part of the way to where we need to go.
+2. Is the 'conflicted copy' file exactly the same as the 'original' file? If so, just put the 'conflicted copy' in the Trash.
 
-When I find a "conflicted copy", there are several things I want to know:
+3. If the 'conflicted copy' and the 'original' file are different, open them both in [Kaleidoscope] so I can compare them and decide which one I want to keep, or merge them.
 
-**Q:	Does the non-"conflicted copy" version still exist?**
+Also, I wrote a [Keyboard Maestro] macro to let me trigger this shell script from the Finder (select one or more 'conflicted copy' files in the Finder, then press a keyboard shortcut).
 
-**If yes:** Are they identical? *Yes?* Put the 'conflicted copy' in the trash. *No?* Show me a comparison between them.
+**You do not _have_ to use Keyboard Maestro to use this script.** It works fine on its own from the command line. It works especially well combined with [dropbox-launchd-conflicted-copy.sh] as I'll explain below.
 
-**If no conflicted copy exists:** rename the 'conflicted copy' to the original filename without the extra parts.
+
+### Longer Explanation
+
+[Previously], I wrote a shell script which will alert me when [Dropbox] has created a "conflicted copy" of a file.
+
+But *finding* conflicted copies is only half of the job.
+
+The 'hard' part is deciding what to do with them.
+
+I realized that I was doing the same thing every time that script alerted me to conflicted copies:
+
+1. 	Switch to Finder and run my Saved Search
+2.	Select a "conflicted copy" file
+3.	Right click, choose "Open Containing Folder"
+4. 	Select both original and "conflicted copy" files
+5.	Open them in [BBEdit] or [Kaleidoscope]
+
+Using this script and Keyboard Maestro I can now do this:
+
+1. 	Switch to Finder and run my Saved Search
+2.	Select 'conflicted copy' and trigger macro
+
 
 ### BYOD (Bring Your Own Diff)
-
-Assuming that two files exist (one a "conflicted copy" and one 'original'), I want to compare them.
 
 Traditionally the tool for doing this is `diff` but it's really only useful for comparing text files.  Since Dropbox can compare lots of other kinds of files, I need a better tool to compare them.
 
@@ -31,6 +50,7 @@ to
 
 	alias diff='/usr/local/bin/bbdiff'
 
+Just make sure that your `diff` program can handle whatever file types you're going to throw at it.
 
 ### After you have compared them, the macro can help you rename the file, if needed
 
@@ -79,3 +99,13 @@ Compare the files, then close them, and the loop will open the next pair.
 [Kaleidoscope]: http://www.kaleidoscopeapp.com
 
 [Previously]: https://github.com/tjluoma/launchd-check-for-dropbox-conflicts
+
+
+
+
+[Keyboard Maestro]: http://www.keyboardmaestro.com/main/
+
+
+
+
+[Dropbox]: http://luo.ma/dropbox
