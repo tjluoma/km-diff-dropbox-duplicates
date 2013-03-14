@@ -84,9 +84,37 @@ do
 
 				if [[ -e "$ORIGINAL_FILE" ]]
 				then
-							# If we found a file with the expected filename we created with that regex
-							# then run our 'diff' program against it and the original file
-						diff ${DIFF_WAIT} "$ORIGINAL_FILE" "$i"
+
+						# First, check whether the files are identical
+
+						if (( cmp -s "$ORIGINAL_FILE" "$i" ))
+						then
+
+								# the files are identical, so trash the "conflicted copy"
+
+								if (( $+commands[trash] ))
+								then
+
+										# if the `trash` command is installed, use it
+
+										trash "$i" && msg "Files are identical, trashed duplicate."
+
+								else
+										# if the trash command isn't installed, just use `mv`
+
+										mv -f "$i" ~/.Trash/ && msg "Files are identical, mv'd duplicate to trash"
+								fi
+
+
+						else
+									# If we found a file with the expected filename we created with that regex
+									# then run our 'diff' program against it and the original file
+								diff ${DIFF_WAIT} "$ORIGINAL_FILE" "$i"
+
+						fi
+
+
+
 				else
 							# if we did not find an "original" file… well,
 							# then this isn't really a duplicate or a
