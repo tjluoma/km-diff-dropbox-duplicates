@@ -5,25 +5,38 @@ A Keyboard Maestro macro (and shell script) to compare a Dropbox "Conflicted Cop
 
 [Previously], I showed how I find Dropbox duplicates (or "conflicted copies") using launchd and a saved Spotlight search.
 
-But then once I have found the file that I want to compare, I use [Kaleidoscope] to compare them. This is done by way of the command line tool `/usr/local/bin/ksdiff`.
+But that's only getting us part of the way to where we need to go.
 
-You could use use `bbdiff` from [BBEdit]. Just look for the line
+When I find a "conflicted copy", there are several things I want to know:
+
+**Q:	Does the non-"conflicted copy" version still exist?**
+
+**If yes:** Are they identical? *Yes?* Put the 'conflicted copy' in the trash. *No?* Show me a comparison between them.
+
+**If no conflicted copy exists:** rename the 'conflicted copy' to the original filename without the extra parts.
+
+### BYOD (Bring Your Own Diff)
+
+Assuming that two files exist (one a "conflicted copy" and one 'original'), I want to compare them.
+
+Traditionally the tool for doing this is `diff` but it's really only useful for comparing text files.  Since Dropbox can compare lots of other kinds of files, I need a better tool to compare them.
+
+My `diff` tool of choice is [Kaleidoscope] which I invoke using its command line tool: `/usr/local/bin/ksdiff`.
+
+There are other options. For example, if you wanted to use `bbdiff` from [BBEdit]. Just edit the line in [km-diff-in-finder.sh]
 
 	alias diff='/usr/local/bin/ksdiff'
 
-and change it to
+to
 
 	alias diff='/usr/local/bin/bbdiff'
 
-or any other program which will accept two file paths.
 
-(Just remember that conflicted files can be all sorts of files, and make sure that your `diff` program can handle it if they aren't just plain text files. That's why I use [Kaleidoscope] by default.)
-
-### It doesn't just let you compare them, it will rename the file if you want.
+### After you have compared them, the macro can help you rename the file, if needed
 
 Say you have two files such as "foo.doc" and "foo (TJ Luoma's conflicted copy 2013-03-12).doc".
 
-You look at them and decide that you want to use the "foo (TJ Luoma's conflicted copy 2013-03-12).doc" one. What do you do? Well, I generally delete the "foo.doc" and then rename the 'conflicted copy' so that it no longer has the 'conflicted copy' part of the filename.
+You look at them and decide that you want to use the "foo (TJ Luoma's conflicted copy 2013-03-12).doc" one. What do you do next? Well, I generally delete the "foo.doc" and then rename the 'conflicted copy' so that it no longer has the 'conflicted copy' part of the filename.
 
 The script will do that for you too.
 
@@ -31,11 +44,13 @@ Simply delete the original file (in this example, "foo.doc") and then call the K
 
 (Obviously if you decide that you want to keep the "foo.doc" file, just delete the other one.)
 
-### Use on the command line
+### You don't *have* to use Keyboard Maestro for this.
 
-By using [dropbox-launchd-conflicted-copy.sh] on the command line you can automatically process all of your Dropbox duplicates at once.
+[km-diff-in-finder.sh] can be called directly from the command line. Just give it the filename (or full path) of a 'conflicted copy' file, and it will work on that file.
 
-***Note:*** using this feature assumes that your chose `diff` program supports the `--wait` flag or equivalent (if different, change `DIFF_WAIT=` in [km-diff-in-finder.sh]).
+Or, combine [km-diff-in-finder.sh] with my previous script [dropbox-launchd-conflicted-copy.sh] and you can automatically process all of your Dropbox duplicates at once.
+
+**Note:** using this feature assumes that your chose `diff` program supports the `--wait` flag or equivalent (if different, change `DIFF_WAIT=` in [km-diff-in-finder.sh]).
 
 To use these together, simply run a loop like this in Terminal:
 
